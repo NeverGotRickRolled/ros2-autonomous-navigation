@@ -120,6 +120,12 @@ source install/setup.bash
 ros2 launch smart_diffbot_bringup single_robot_sim_example.launch.py
 ```
 
+The simulated GPU LiDAR and scan monitor are enabled by default. To launch without them:
+
+```bash
+ros2 launch smart_diffbot_bringup single_robot_sim_example.launch.py lidar:=false
+```
+
 ### 5. Explore navigation in RViz
 
 In another terminal, source the workspace and launch the upstream RViz configuration:
