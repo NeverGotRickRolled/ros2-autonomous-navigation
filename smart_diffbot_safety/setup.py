@@ -13,6 +13,7 @@ setup(
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='Manthan',
+    maintainer_email='113732468+NeverGotRickRolled@users.noreply.github.com',
     description='Monitoring-only front-sector LaserScan obstacle monitor.',
     license='Apache-2.0',
     tests_require=['pytest'],
