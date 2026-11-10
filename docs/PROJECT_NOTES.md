@@ -37,3 +37,16 @@ Do not mark a check complete solely because a launch command returns without an 
 ## Change log
 
 This fork currently documents the upstream system and setup. Any future code/configuration changes should be recorded here with a reason, validation steps and a link to the corresponding commit or issue.
+
+
+## Independent contribution: LaserScan safety monitor
+
+A new package, `smart_diffbot_safety`, has been added in this fork. It contains a ROS-independent front-sector LaserScan analysis helper, a ROS 2 node that publishes nearest-front-range / scan-valid / obstacle-threshold telemetry, and unit tests for filtering and angle handling. This is a monitoring-only component; it does not command the robot or replace a certified safety system.
+
+The upstream robot model currently has no LiDAR sensor definition and the existing Nav2 costmaps do not configure a LaserScan obstacle layer. Consequently, this package is not yet connected to a live simulated scan. Sensor modelling, Gazebo-to-ROS bridging, Nav2 costmap integration and runtime validation are follow-on tasks. The tests have not yet been run in ROS 2 Humble.
+
+### Change log
+
+- Added `smart_diffbot_safety` as an independent ROS 2 Python package for front-sector scan monitoring.
+- Added pure-Python scan analysis tests covering nearest valid return, invalid measurements, empty sectors, angle wraparound and invalid metadata.
+- Runtime build and simulation validation remain pending.
