@@ -7,23 +7,23 @@ flowchart TB
     subgraph SIM["Gazebo Fortress simulation"]
         WORLD["World / environment"]
         ROBOT["Differential-drive robot model"]
-        SENSORS["Simulated sensors\nGNSS / IMU / camera (as configured)"]
+        SENSORS["Simulated sensors\nGNSS / IMU / camera / GPU LiDAR (optional)"]
         WORLD --> ROBOT
         ROBOT --> SENSORS
     end
 
     subgraph ROS["ROS 2 Humble"]
-        BRIDGE["Gazebo ↔ ROS 2 integration"]
+        BRIDGE["Gazebo ↔ ROS 2 integration\nLaserScan bridge: /scan"]
         CONTROL["ros2_control\nDiff-drive controller"]
         ODOM["Wheel odometry"]
         LOCAL["robot_localization\nLocalization / state estimation"]
         TF["TF transforms\nmap → odom → base_link"]
-        NAV["Nav2 navigation stack"]
+        NAV["Nav2 navigation stack\nObstacle layers consume LaserScan"]
         RVIZ["RViz visualization"]
         CLIENT["Navigation goal\nRViz or example client"]
     end
 
-    SENSORS --> BRIDGE
+    SENSORS --> BRIDGE\n    BRIDGE --> COSTMAP["Nav2 local + global obstacle layers"]\n    COSTMAP --> NAV
     BRIDGE --> CONTROL
     CONTROL --> ODOM
     ODOM --> LOCAL
@@ -37,6 +37,8 @@ flowchart TB
 ```
 
 ## Main data/control path
+
+The fork adds an optional 360-degree GPU LiDAR sensor to the simulated robot. Its Gazebo LaserScan topic is bridged to ROS 2 (`/scan` for a single robot, namespaced scan topic for namespaced launches). Nav2 local and global costmaps are configured with an obstacle layer that marks and ray-clears obstacles from this scan. This configuration is committed but awaits runtime verification.
 
 1. Gazebo simulates the environment and robot.
 2. The ROS-Gazebo integration exposes simulation data and interfaces to ROS 2.
