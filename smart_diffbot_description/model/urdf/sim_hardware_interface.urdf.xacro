@@ -36,12 +36,10 @@
       </ros>
     </plugin>
 
-    <!-- Camera (optional) -->
-    <xacro:if value="$(arg camera)">
-      <plugin filename="ignition-gazebo-sensors-system"  name="ignition::gazebo::systems::Sensors">
-        <render_engine>ogre2</render_engine>
-      </plugin>
-    </xacro:if>
+    <!-- Gazebo sensor system (camera and GPU LiDAR) -->
+    <plugin filename="ignition-gazebo-sensors-system" name="ignition::gazebo::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
 
     <!-- navsat -->
     <plugin filename="ignition-gazebo-navsat-system" name="ignition::gazebo::systems::NavSat"/>
@@ -61,6 +59,40 @@
         <visualize>true</visualize>
         <topic>$(arg namespace)/camera/image_raw</topic>
         <ignition_frame_id>$(arg frame_prefix)camera_link</ignition_frame_id>
+      </sensor>
+    </gazebo>
+  </xacro:if>
+
+  <xacro:if value="$(arg lidar)">
+    <gazebo reference="lidar_link">
+      <sensor name="lidar" type="gpu_lidar">
+        <pose>0 0 0 0 0 0</pose>
+        <topic>$(arg namespace)/scan</topic>
+        <update_rate>10</update_rate>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>720</samples>
+              <resolution>1</resolution>
+              <min_angle>-3.14159265</min_angle>
+              <max_angle>3.14159265</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>0</min_angle>
+              <max_angle>0</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.10</min>
+            <max>12.0</max>
+            <resolution>0.01</resolution>
+          </range>
+        </ray>
+        <always_on>1</always_on>
+        <visualize>true</visualize>
+        <ignition_frame_id>$(arg frame_prefix)lidar_link</ignition_frame_id>
       </sensor>
     </gazebo>
   </xacro:if>
