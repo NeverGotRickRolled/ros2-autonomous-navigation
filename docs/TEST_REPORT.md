@@ -31,7 +31,9 @@
 | RViz goal execution | Not run | — |
 | Multi-robot simulation | Not run | — |
 | `smart_diffbot_safety` Python unit tests | Not run | — |
-| LaserScan source and safety-monitor runtime integration | Blocked: no LiDAR sensor in inherited robot model | — |
+| Gazebo GPU LiDAR sensor and ROS LaserScan bridge | Implemented; runtime not run | — |
+| Nav2 local/global LaserScan obstacle layers | Configured; runtime not run | — |
+| Safety monitor receives simulated scan | Not run | — |
 
 ## Detailed test record
 
@@ -78,7 +80,7 @@ colcon test-result --verbose
 
 **Result:** Not run.
 
-**Integration note:** the upstream robot description currently does not define a LiDAR sensor, so a live LaserScan source must be added and verified before end-to-end monitor integration.
+**Integration note:** this fork now includes an optional GPU LiDAR sensor, bridge and Nav2 obstacle-layer configuration. End-to-end topic, TF and costmap behavior still need runtime validation.
 
 ### 4. Navigation
 
