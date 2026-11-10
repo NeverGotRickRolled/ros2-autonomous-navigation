@@ -139,6 +139,12 @@ The upstream source also provides a two-robot example:
 ros2 launch smart_diffbot_bringup multi_robot_sim_example.launch.py
 ```
 
+## Independent contribution: front-sector LaserScan monitor
+
+This fork adds a separate ROS 2 Python package, [`smart_diffbot_safety`](smart_diffbot_safety/README.md). It analyses the forward LaserScan sector and publishes nearest range, scan validity and a configurable obstacle-threshold flag. Its analysis helper is separated from ROS imports to support focused unit testing.
+
+**Important integration status:** the inherited robot description currently has no LiDAR sensor, and the inherited Nav2 costmaps do not yet subscribe to a LaserScan obstacle layer. The monitor therefore requires a compatible `/scan` publisher and is not yet integrated into robot motion control. It is telemetry only—not an emergency stop or certified safety function. Unit tests are included but have not yet been executed in ROS 2 Humble; Gazebo sensor integration and runtime validation remain pending.
+
 ## Architecture, workflow and test evidence
 
 - [System architecture](docs/ARCHITECTURE.md) — conceptual Gazebo, ROS 2 control, localization and Nav2 data flow.
