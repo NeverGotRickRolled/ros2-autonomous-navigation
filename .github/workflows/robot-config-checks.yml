@@ -45,21 +45,43 @@ jobs:
           import xml.etree.ElementTree as ET
           import yaml
 
-          launch_path = Path("smart_diffbot_bringup/launch/simulation.launch.py")
-          launch_text = launch_path.read_text(encoding="utf-8")
-          ast.parse(launch_text, filename=str(launch_path))
-          assert launch_text.count("executable='scan_safety_monitor'") == 2
-          assert launch_text.count("' lidar:=', LaunchConfiguration('lidar')") == 2
-          print("Launch Python syntax and single/namespaced scan monitor wiring OK")
+          launch_paths = [
+              Path("smart_diffbot_bringup/launch/simulation.launch.py"),
+              Path("smart_diffbot_bringup/launch/main.launch.py"),
+              Path("smart_diffbot_bringup/launch/examples/single_robot_sim_example.launch.py"),
+              Path("smart_diffbot_bringup/launch/examples/multi_robot_sim_example.launch.py"),
+          ]
+          launch_texts = {}
+          for path in launch_paths:
+              source = path.read_text(encoding="utf-8")
+              ast.parse(source, filename=str(path))
+              launch_texts[path.name] = source
+              print(f"Python syntax OK: {path}")
+
+          simulation = launch_texts["simulation.launch.py"]
+          assert simulation.count("executable='scan_safety_monitor'") == 2
+          assert simulation.count("' lidar:=', LaunchConfiguration('lidar')") == 2
+          assert "'lidar', LaunchConfiguration('lidar')" in launch_texts["main.launch.py"]
+          assert "'lidar', LaunchConfiguration('lidar')" in launch_texts["single_robot_sim_example.launch.py"]
+          assert launch_texts["multi_robot_sim_example.launch.py"].count(
+              "'lidar', LaunchConfiguration('lidar')"
+          ) == 2
+          print("LiDAR launch argument and single/multi-robot monitor wiring OK")
 
           xacro_files = [
               Path("smart_diffbot_description/model/urdf/model.urdf.xacro"),
               Path("smart_diffbot_description/model/urdf/robot.urdf.xacro"),
               Path("smart_diffbot_description/model/urdf/sim_hardware_interface.urdf.xacro"),
           ]
+          roots = {}
           for path in xacro_files:
-              ET.parse(path)
+              roots[path.name] = ET.parse(path).getroot()
               print(f"XML OK: {path}")
+          assert any(node.attrib.get("type") == "gpu_lidar"
+                     for node in roots["sim_hardware_interface.urdf.xacro"].iter("sensor"))
+          assert any(node.attrib.get("name") == "lidar_link"
+                     for node in roots["model.urdf.xacro"].iter("link"))
+          print("GPU LiDAR sensor and robot frame are present in Xacro")
 
           nav_path = Path("smart_diffbot_navigation/config/navigation_params.yaml")
           nav = yaml.safe_load(nav_path.read_text(encoding="utf-8"))
