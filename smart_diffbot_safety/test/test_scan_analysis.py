@@ -9,7 +9,7 @@ def test_returns_nearest_valid_front_measurement():
     result = front_sector_min_range(
         [2.0, 0.8, 0.4, 0.2], -0.3, 0.2, 0.1, 10.0, 0.25
     )
-    assert result == pytest.approx(0.8)
+    assert result == pytest.approx(0.4)
 
 
 def test_ignores_invalid_and_out_of_range_values():
