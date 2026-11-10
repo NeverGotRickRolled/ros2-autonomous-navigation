@@ -30,6 +30,8 @@
 | Nav2 lifecycle and costmaps | Not run | — |
 | RViz goal execution | Not run | — |
 | Multi-robot simulation | Not run | — |
+| `smart_diffbot_safety` Python unit tests | Not run | — |
+| LaserScan source and safety-monitor runtime integration | Blocked: no LiDAR sensor in inherited robot model | — |
 
 ## Detailed test record
 
@@ -61,7 +63,24 @@ ros2 launch smart_diffbot_bringup single_robot_sim_example.launch.py
 
 **Result:** Not run.
 
-### 3. Navigation
+### 3. Front-sector LaserScan analysis
+
+**Command**
+
+```bash
+colcon test --packages-select smart_diffbot_safety
+colcon test-result --verbose
+```
+
+**Expected:** pure-Python scan analysis tests pass for valid ranges, invalid measurements, empty sectors, angle wraparound and invalid metadata.
+
+**Actual output:** Pending.
+
+**Result:** Not run.
+
+**Integration note:** the upstream robot description currently does not define a LiDAR sensor, so a live LaserScan source must be added and verified before end-to-end monitor integration.
+
+### 4. Navigation
 
 **Procedure:** Start the documented localization and navigation components, open RViz, set a reachable 2D Goal Pose, and observe the robot.
 
