@@ -1,0 +1,67 @@
+name: Robot configuration checks
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "smart_diffbot_description/**"
+      - "smart_diffbot_bringup/launch/**"
+      - "smart_diffbot_navigation/config/**"
+      - "smart_diffbot_safety/**"
+      - ".github/workflows/robot-config-checks.yml"
+  pull_request:
+    paths:
+      - "smart_diffbot_description/**"
+      - "smart_diffbot_bringup/launch/**"
+      - "smart_diffbot_navigation/config/**"
+      - "smart_diffbot_safety/**"
+      - ".github/workflows/robot-config-checks.yml"
+
+jobs:
+  static-and-unit-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install lightweight test dependencies
+        run: python -m pip install --upgrade pytest PyYAML
+
+      - name: Run ROS-independent scan analysis tests
+        env:
+          PYTHONPATH: smart_diffbot_safety
+        run: python -m pytest -q smart_diffbot_safety/test
+
+      - name: Parse Xacro XML and Nav2 YAML configuration
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          import yaml
+
+          xacro_files = [
+              Path("smart_diffbot_description/model/urdf/model.urdf.xacro"),
+              Path("smart_diffbot_description/model/urdf/robot.urdf.xacro"),
+              Path("smart_diffbot_description/model/urdf/sim_hardware_interface.urdf.xacro"),
+          ]
+          for path in xacro_files:
+              ET.parse(path)
+              print(f"XML OK: {path}")
+
+          nav_path = Path("smart_diffbot_navigation/config/navigation_params.yaml")
+          nav = yaml.safe_load(nav_path.read_text(encoding="utf-8"))
+          for scope in ("/**/local_costmap", "/**/global_costmap"):
+              params = nav[scope]["ros__parameters"]
+              assert "obstacle_layer" in params["plugins"], scope
+              obstacle = params["obstacle_layer"]
+              assert obstacle["plugin"] == "nav2_costmap_2d::ObstacleLayer"
+              assert obstacle["scan"]["data_type"] == "LaserScan"
+              assert obstacle["scan"]["marking"] is True
+              assert obstacle["scan"]["clearing"] is True
+          print("Nav2 local/global obstacle layers OK")
+          PY
