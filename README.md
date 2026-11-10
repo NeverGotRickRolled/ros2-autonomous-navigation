@@ -1,183 +1,188 @@
-# SMART diffbot
-Generic diff drive robot simulated in Gazebo for testing outdoor GNSS based navigation using Nav2. 
+# ROS 2 Autonomous Navigation — SMART diffbot
 
-It supports namespacing and multiple robots in one simulation. Tested for ROS 2 Humble and Gazebo Fortress. 
+[![ROS 2](https://img.shields.io/badge/ROS_2-Humble-22314E?logo=ros)](https://docs.ros.org/en/humble/)
+[![Gazebo](https://img.shields.io/badge/Gazebo-Fortress-orange)](https://gazebosim.org/)
+[![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
+[![Upstream](https://img.shields.io/badge/Upstream-SaxionMechatronics%2Fsmart__diffbot-informational)](https://github.com/SaxionMechatronics/smart_diffbot)
 
-Developed by the Smart Mechatronics And RoboTics (SMART) Research Group of Saxion University of Applied Sciences. Supported by Regiorgaan SIA project RAAK-MKB Autonomous Agricultural Navigation (RAAK.MKB16.016).
+A ROS 2 mobile-robot simulation and navigation workspace based on **SMART diffbot**, an open-source differential-drive robot developed by the SMART Research Group at Saxion University of Applied Sciences.
 
-![screenshot](screenshot.png)
+This fork is being used as a learning and engineering portfolio project focused on understanding, configuring and documenting a ROS 2 navigation stack. The upstream implementation is retained; changes and experiments in this fork will be documented separately.
 
-# Install 
+> **Status:** Source fork and documentation review complete. Runtime build, simulation and navigation tests have **not yet been performed in this environment**. Results will be added after testing on Ubuntu with ROS 2.
 
-### Dependencies from binaries
-#### Robot modeling
+## Upstream project and attribution
+
+- **Original project:** [SaxionMechatronics/smart_diffbot](https://github.com/SaxionMechatronics/smart_diffbot)
+- **Original authors:** SMART Research Group, Saxion University of Applied Sciences
+- **Original purpose:** Differential-drive robot simulation for outdoor GNSS-based navigation using Nav2
+- **Original project licence:** Apache License 2.0
+- **This repository:** A fork of the upstream repository. The upstream source files and their history are preserved.
+
+Please consult the upstream project for original design decisions and canonical documentation. This repository does not claim authorship of the upstream robot, packages or navigation implementation.
+
+## What the upstream project contains
+
+The upstream README and source tree describe the following capabilities and packages:
+
+- Differential-drive robot model and Gazebo simulation
+- ROS 2 control integration
+- Localization using GNSS-related data and `robot_localization`
+- Nav2 navigation launch/configuration
+- RViz visualization
+- Single-robot and namespaced multi-robot simulation examples
+- Example docking and line-following action clients
+- Dummy hardware interface example
+
+These are **upstream-documented capabilities**, not yet independently verified by this fork's maintainer.
+
+## Target software environment
+
+The upstream project documents and was tested with:
+
+| Component | Target |
+|---|---|
+| Operating system | Ubuntu 22.04 |
+| ROS distribution | ROS 2 Humble |
+| Simulator | Gazebo Fortress (Ignition Fortress) |
+| Build tool | colcon |
+| Navigation | Navigation2 |
+| Robot control | ros2_control / ros2_controllers |
+| Localization | robot_localization |
+
+This repository targets the versions above. Compatibility should be rechecked before using a different ROS distribution or Gazebo release.
+
+## Repository layout
+
+The workspace contains the upstream ROS 2 packages, including:
+
+- `smart_diffbot_bringup/` — simulation worlds and bringup launch files
+- `smart_diffbot_control/` — robot control package
+- `smart_diffbot_localization/` — localization launch/configuration
+- `smart_diffbot_navigation/` — navigation launch/configuration
+- `smart_diffbot_clients/` — example ROS 2 clients
+- `gz_ros2_control/`, `ros2_aruco/`, `rviz_satellite/` — Git submodules
+
+The exact package contents and launch files are maintained in the source tree. Use `git submodule update --init --recursive` to retrieve the pinned submodule revisions.
+
+## Build and run (Ubuntu + ROS 2 Humble)
+
+Windows is fine for browsing and editing this repository, but the documented ROS 2 / Gazebo runtime workflow is intended for Ubuntu. The commands below reproduce the upstream setup; they have not yet been executed as part of this fork's verification.
+
+### 1. Install dependencies
+
 ```bash
-sudo apt install ros-humble-xacro
-sudo apt install ros-humble-joint-state-publisher
-sudo apt install ros-humble-joint-state-publisher-gui
+sudo apt update
+sudo apt install \
+  ros-humble-xacro \
+  ros-humble-joint-state-publisher \
+  ros-humble-joint-state-publisher-gui \
+  ignition-fortress \
+  ros-humble-ros-gz \
+  ros-humble-ros2-control \
+  ros-humble-ros2-controllers \
+  ros-humble-tf-transformations \
+  ros-humble-robot-localization \
+  ros-humble-navigation2
 ```
 
-#### Gazebo Fortress
+The upstream project also documents Python dependencies for ArUco functionality:
+
 ```bash
-sudo apt install ignition-fortress
-sudo apt install ros-humble-ros-gz
-```
-
-#### ros2_control
-```bash 
-sudo apt install ros-humble-ros2-control
-sudo apt install ros-humble-ros2-controllers
-```
-
-#### Aruco detection
-```bash 
 pip3 install transforms3d opencv-contrib-python==4.6.0.66
-sudo apt-get install ros-humble-tf-transformations
 ```
 
-#### Localization 
+### 2. Clone and retrieve submodules
+
 ```bash
-sudo apt install ros-humble-robot-localization
+mkdir -p ~/ros2_ws/src
+cd ~/ros2_ws/src
+git clone https://github.com/NeverGotRickRolled/ros2-autonomous-navigation.git
+cd ros2-autonomous-navigation
+git submodule update --init --recursive
 ```
 
-#### Navigation
+### 3. Build the workspace
+
 ```bash
-sudo apt install ros-humble-navigation2
-```
-
-### The SMART diffbot packages
-Clone the `smart_diffbot` repository to the `src` folder of your ROS 2 workspace. 
-
-Some dependencies are not available as binary installs for ROS 2 Humble. These are included as submodules to this package. These include:
-
-* [gz_ros2_control](https://github.com/ros-controls/gz_ros2_control.git) 
-* [rviz_satellite](https://github.com/blacksoul000/rviz_satellite.git)
-* [ros2_arcuo](https://github.com/JMU-ROBOTICS-VIVA/ros2_aruco.git)
-
-They are available as submodules to this package and they can be added by running inside of the `smart_diffbot` folder:
-```bash 
-git submodule init
-git submodule update
-```
-
-Now navigate back to your ROS 2 workspace folder and colcon build.
-```bash
+cd ~/ros2_ws
 source /opt/ros/humble/setup.bash
-colcon build --symlink-install 
+rosdep install --from-paths src --ignore-src -r -y
+colcon build --symlink-install
 source install/setup.bash
 ```
 
-# Examples
+### 4. Launch the example simulation
 
-Example launch files are provided which start a Gazebo world with the simulated SMART diffbot(s).
-
-## Launch example simulation of a single robot
-An example world is included which contains a docking station and a line on the floor. 
-The following command starts this world, including one SMART diffbot with camera and without using namespacing:
 ```bash
 ros2 launch smart_diffbot_bringup single_robot_sim_example.launch.py
 ```
 
-## Visualization
-RViz can be used to give this robot a goal position to navigate to and to localize it on a map:
+### 5. Explore navigation in RViz
+
+In another terminal, source the workspace and launch the upstream RViz configuration:
+
 ```bash
+source /opt/ros/humble/setup.bash
+source ~/ros2_ws/install/setup.bash
 ros2 launch smart_diffbot_navigation rviz.launch.py
 ```
 
-To view the map, switch on the AerialMapDisplay in the Displays window of RViz.
+Use the **2D Goal Pose** tool in RViz to set a navigation goal. Refer to the upstream README and launch files for the complete bringup sequence and other examples.
 
-To set a goal pose, click the "2D Goal Pose" button in the upper bar and select a location on the map where you want the robot to go. 
+### Multi-robot simulation
 
-## Example clients
-Two example clients have been included to send a goal request to the navigation stack. 
+The upstream source also provides a two-robot example:
 
-To send a docking command, use:
-```bash
-ros2 run smart_diffbot_clients docking_client
-```
-
-To send a line following command, use:
-```bash
-ros2 run smart_diffbot_clients line_follow_client
-```
-
-## Simulation example with multiple robots
-Another example launches an empty world with two robots, including namespacing:
 ```bash
 ros2 launch smart_diffbot_bringup multi_robot_sim_example.launch.py
 ```
 
-# Basic use 
-The robot can be used in any Gazebo world that includes spherical coordinates (such that GNSS data is available) and a bridged clock from Gazebo to ROS 2. The included worlds can be used as examples. 
+## Engineering review and planned workflow
 
-With a world running, the robot can be spawned and started using:
+This fork is intentionally keeping code changes minimal. The planned work is:
 
-```bash
-ros2 launch smart_diffbot_bringup main.launch.py
-```
+1. Reproduce the documented Humble + Fortress build.
+2. Launch the single-robot world and inspect the ROS graph and TF tree.
+3. Verify localization topics and transforms.
+4. Send a navigation goal in RViz and record the outcome.
+5. Reproduce the multi-robot example if the single-robot workflow is stable.
+6. Document any fixes, configuration changes, test evidence and upstream issues.
 
-Although there is no actual hardware of the SMART diffbot, a dummy hardware interface has also been included in this package to demonstrate how a similar package could be set up for an actual robot with simple switching between simulation and hardware control. It would be a matter of setting a `sim` argument to `false` for the main robot launch file. 
+### Verification log
 
-Using `use_namespace:=true`, namespacing is activated. The namespace is equal to the robot name, which can be altered by adding a `robot_name` argument. The camera can be disabled by adding the `camera:=false` argument. Currently, the simulation only supports a maximum of one robot with a camera in the same world. In case of multiple robots in one simulation, make sure to disable the camera on the others. Furthermore, spawn positions and robot colors can be altered using arguments to this launch file. See the multi_robot_example launch file as an example. 
+| Check | Status |
+|---|---|
+| Fork and source attribution | Complete |
+| Upstream README and package structure reviewed | Complete |
+| ROS 2 Humble / Gazebo Fortress target identified | Documented upstream |
+| Dependencies installed | Not yet tested |
+| Colcon build | Not yet tested |
+| Gazebo launch | Not yet tested |
+| RViz navigation goal | Not yet tested |
+| Multi-robot example | Not yet tested |
 
-# Development use - seperation of control, localization and navigation
-For development purposes it is convenient to (instead of using the main launch file) spawn the robot and launch its control, localization and navigation software in seperate terminals. In the main launch file, these are all combined. This way, if you are developing one of the components, you only have to restart that component after a change in software instead of restarting the whole simulation.
+Test results will be updated with the machine/software versions, exact commands, observed outputs and screenshots. No successful runtime result is claimed until it has been reproduced.
 
-### Test the robot simulation
-Start a Gazebo world, by default the empty world:
-```bash
-ros2 launch smart_diffbot_bringup gazebo_world.launch.py
-```
+## Licensing and third-party dependencies
 
-Spawn the robot: 
-```bash
-ros2 launch smart_diffbot_bringup simulation.launch.py
-```
+The upstream repository declares **Apache License 2.0**. The upstream licence file is retained in this fork. When redistributing the project or modified source, retain applicable copyright, patent, trademark and attribution notices, include a copy of the licence, and clearly mark modified files as required by Apache-2.0.
 
-### Test the controllers
-Start the controllers:
-```bash
-ros2 launch smart_diffbot_control control.launch.py
-```
+The repository uses Git submodules. Each dependency has its own source repository and may have its own licence and notices. Review those terms independently before redistributing a combined package.
 
-You can use a keyboard teleop node to move the robot around using keyboard:
-```bash
-ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r /cmd_vel:=/diff_drive_controller/cmd_vel_unstamped
-```
+- [gz_ros2_control](https://github.com/ros-controls/gz_ros2_control)
+- [ros2_aruco](https://github.com/JMU-ROBOTICS-VIVA/ros2_aruco)
+- [rviz_satellite](https://github.com/blacksoul000/rviz_satellite)
 
-You can open RViz and check control and check the base_link => odom transform:
-```bash
-ros2 launch smart_diffbot_control rviz.launch.py
-```
+This README is project documentation, not legal advice.
 
-### Test localization
-On top of control, run localization:
-```bash
-ros2 launch smart_diffbot_localization localization.launch.py
-```
+## References
 
-You can again use a keyboard teleop node to move the robot around using keyboard:
-```bash
-ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r /cmd_vel:=/diff_drive_controller/cmd_vel_unstamped
-```
+- [SMART diffbot — upstream repository](https://github.com/SaxionMechatronics/smart_diffbot)
+- [ROS 2 Humble documentation](https://docs.ros.org/en/humble/)
+- [Navigation2 documentation](https://navigation.ros.org/)
+- [Gazebo documentation](https://gazebosim.org/docs/)
 
-You can open RViz and check the base_link => odom => map transform:
-```bash
-ros2 launch smart_diffbot_localization rviz.launch.py
-```
+---
 
-To view the satellite map, switch on the AerialMapDisplay in the Displays window of RViz.
-
-### Test navigation
-On top of control and localization, run navigation:
-```bash
-ros2 launch smart_diffbot_navigation navigation.launch.py
-```
-
-Open RViz and check the navigation behaviour by setting a 2D Goal Pose on the map:
-
-```bash
-ros2 launch smart_diffbot_navigation rviz.launch.py
-```
-
-To view the satellite map, switch on the AerialMapDisplay in the Displays window of RViz.
+Maintained as a robotics learning and portfolio project by [Manthan](https://github.com/NeverGotRickRolled). Upstream authorship remains with the original SMART diffbot contributors.
