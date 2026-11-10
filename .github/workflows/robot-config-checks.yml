@@ -37,12 +37,20 @@ jobs:
           PYTHONPATH: smart_diffbot_safety
         run: python -m pytest -q smart_diffbot_safety/test
 
-      - name: Parse Xacro XML and Nav2 YAML configuration
+      - name: Parse launch Python, Xacro XML and Nav2 YAML
         run: |
           python - <<'PY'
+          import ast
           from pathlib import Path
           import xml.etree.ElementTree as ET
           import yaml
+
+          launch_path = Path("smart_diffbot_bringup/launch/simulation.launch.py")
+          launch_text = launch_path.read_text(encoding="utf-8")
+          ast.parse(launch_text, filename=str(launch_path))
+          assert launch_text.count("executable='scan_safety_monitor'") == 2
+          assert launch_text.count("' lidar:=', LaunchConfiguration('lidar')") == 2
+          print("Launch Python syntax and single/namespaced scan monitor wiring OK")
 
           xacro_files = [
               Path("smart_diffbot_description/model/urdf/model.urdf.xacro"),
@@ -55,13 +63,16 @@ jobs:
 
           nav_path = Path("smart_diffbot_navigation/config/navigation_params.yaml")
           nav = yaml.safe_load(nav_path.read_text(encoding="utf-8"))
-          for scope in ("/**/local_costmap", "/**/global_costmap"):
-              params = nav[scope]["ros__parameters"]
+          for scope, costmap_name in (
+              ("/**/local_costmap", "local_costmap"),
+              ("/**/global_costmap", "global_costmap"),
+          ):
+              params = nav[scope][costmap_name]["ros__parameters"]
               assert "obstacle_layer" in params["plugins"], scope
               obstacle = params["obstacle_layer"]
               assert obstacle["plugin"] == "nav2_costmap_2d::ObstacleLayer"
               assert obstacle["scan"]["data_type"] == "LaserScan"
               assert obstacle["scan"]["marking"] is True
               assert obstacle["scan"]["clearing"] is True
-          print("Nav2 local/global obstacle layers OK")
+          print("Nav2 local/global LaserScan obstacle layers OK")
           PY
