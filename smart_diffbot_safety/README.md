@@ -61,3 +61,29 @@ ros2 topic echo /safety/obstacle_detected
 Unit tests are provided in test/. They have not yet been executed in a ROS 2
 Humble environment. Runtime integration with Gazebo and a real /scan topic
 remains pending.
+
+## Verify the simulation integration
+
+The bringup launch now enables the simulated LiDAR by default and starts the
+monitor automatically. To disable the sensor and monitor for a comparison run,
+pass `lidar:=false` to the top-level simulation launch.
+
+After launching the single-robot example, inspect:
+
+```bash
+ros2 topic info /scan
+ros2 topic hz /scan
+ros2 topic echo /safety/front_min_range
+ros2 topic echo /safety/scan_valid
+ros2 topic echo /safety/obstacle_detected
+ros2 topic echo /local_costmap/costmap --once
+ros2 topic echo /global_costmap/costmap --once
+```
+
+For namespaced robots, use the robot namespace on the scan and monitor topics,
+for example `/robot_1/scan` and `/robot_1/safety/obstacle_detected`.
+
+A successful static CI check does not prove Gazebo GPU rendering, bridge message
+conversion, TF timing or Nav2 costmap operation. Record those observations in
+the repository test report after running the stack on Ubuntu 22.04 + ROS 2
+Humble + Gazebo Fortress.
