@@ -5,6 +5,7 @@
   <!-- Arguments -->
   <xacro:arg name="sim" default="true" />
   <xacro:arg name="camera" default="true" />
+  <xacro:arg name="lidar" default="true" />
   <xacro:arg name="color" default="SaxionGreen" />
   <xacro:arg name="robot_name" default="smart_diffbot" />
   <xacro:arg name="namespace" default="" />
