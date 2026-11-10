@@ -27,6 +27,8 @@ def generate_launch_description():
     ## Simulation specific arguments
     camera_arg = DeclareLaunchArgument(name='camera', default_value='true', choices=['true', 'false'],
                                     description='[Simulation only] Include camera in robot model')
+    lidar_arg = DeclareLaunchArgument(name='lidar', default_value='true', choices=['true', 'false'],
+                                    description='[Simulation only] Include GPU LiDAR and scan monitor')
     color_arg = DeclareLaunchArgument(name='color', default_value='SaxionGreen', 
                                     choices=['SaxionGreen', 'green', 'red', 'yellow', 'blue'],
                                     description='[Simulation only] Color of the main body of the robot')
@@ -45,6 +47,7 @@ def generate_launch_description():
         # Or simulation
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([os.path.join(get_package_share_directory(robot+'_bringup'), 'launch', 'simulation.launch.py')]),
+            launch_arguments=[('lidar', LaunchConfiguration('lidar'))],
             condition=IfCondition(LaunchConfiguration('sim')),
         ),
 
@@ -75,6 +78,7 @@ def generate_launch_description():
         namespace_arg,
         costmap_arg,
         camera_arg,
+        lidar_arg,
         color_arg,
         x_arg,
         y_arg,
