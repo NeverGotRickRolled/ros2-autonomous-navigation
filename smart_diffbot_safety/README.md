@@ -5,7 +5,7 @@ LaserScan stream and publishes proximity status.
 
 ## Outputs
 
-For the default input /scan, the node publishes:
+For the default relative input topic `scan` (resolved to `/scan` for a single robot or `/<robot_name>/scan` in a namespaced launch), the node publishes:
 
 | Topic | Type | Meaning |
 |---|---|---|
@@ -28,7 +28,7 @@ Override the input topic and threshold:
 
 ```bash
 ros2 run smart_diffbot_safety scan_safety_monitor --ros-args \
-  -p scan_topic:=/scan \
+  -p scan_topic:=scan \
   -p obstacle_distance:=0.65 \
   -p front_sector_half_angle:=0.523599
 ```
@@ -52,8 +52,9 @@ ros2 topic echo /safety/obstacle_detected
 - This is a monitoring and telemetry component only. It does not publish
   velocity commands, override Nav2, implement an emergency stop, or provide a
   certified protective safety function.
-- The current upstream robot description does not yet define a LiDAR sensor.
-  This monitor requires a compatible LaserScan publisher before robot use.
+- The fork now adds an optional Gazebo Fortress GPU LiDAR and bridges its scan
+  to ROS 2. Runtime topic names and sensor output still need to be verified on
+  the target Ubuntu / ROS 2 Humble environment.
 
 ## Validation status
 
