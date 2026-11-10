@@ -5,6 +5,7 @@
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 [![Upstream](https://img.shields.io/badge/Upstream-SaxionMechatronics%2Fsmart__diffbot-informational)](https://github.com/SaxionMechatronics/smart_diffbot)
 [![Documentation checks](https://github.com/NeverGotRickRolled/ros2-autonomous-navigation/actions/workflows/docs-check.yml/badge.svg)](https://github.com/NeverGotRickRolled/ros2-autonomous-navigation/actions/workflows/docs-check.yml)
+[![Robot configuration checks](https://github.com/NeverGotRickRolled/ros2-autonomous-navigation/actions/workflows/robot-config-checks.yml/badge.svg)](https://github.com/NeverGotRickRolled/ros2-autonomous-navigation/actions/workflows/robot-config-checks.yml)
 
 A ROS 2 mobile-robot simulation and navigation workspace based on **SMART diffbot**, an open-source differential-drive robot developed by the SMART Research Group at Saxion University of Applied Sciences.
 
@@ -143,7 +144,7 @@ ros2 launch smart_diffbot_bringup multi_robot_sim_example.launch.py
 
 This fork adds a separate ROS 2 Python package, [`smart_diffbot_safety`](smart_diffbot_safety/README.md). It analyses the forward LaserScan sector and publishes nearest range, scan validity and a configurable obstacle-threshold flag. Its analysis helper is separated from ROS imports to support focused unit testing.
 
-**Integration status:** this fork now adds an optional 360-degree Gazebo Fortress GPU LiDAR to the robot model, an Ignition-to-ROS `LaserScan` bridge, and Nav2 obstacle layers in both local and global costmaps. The sensor can be disabled with the `lidar:=false` launch argument. The safety monitor uses a relative `scan` topic so it can resolve correctly in namespaced multi-robot launches. These changes are committed but have not yet been built or run in Gazebo; topic names, TF frame, sensor rendering and costmap behavior must be confirmed on Ubuntu + ROS 2 Humble. The monitor remains telemetry only—not an emergency stop or certified safety function.
+**Integration status:** this fork now adds an optional 360-degree Gazebo Fortress GPU LiDAR to the robot model, an Ignition-to-ROS `LaserScan` bridge, and Nav2 obstacle layers in both local and global costmaps. The sensor can be disabled with the `lidar:=false` launch argument. The safety monitor is started automatically when LiDAR is enabled and uses a relative `scan` topic for namespaced launches. GitHub Actions has passed the 9 ROS-independent scan-analysis tests and static XML/YAML/launch checks. The changes have not yet been built or run in ROS 2 / Gazebo; topic names, TF frame, GPU sensor rendering and live costmap behavior must still be confirmed on Ubuntu + ROS 2 Humble. The monitor remains telemetry only—not an emergency stop or certified safety function.
 
 ## Architecture, workflow and test evidence
 
@@ -174,6 +175,8 @@ This fork is intentionally keeping code changes minimal. The planned work is:
 | Upstream README and package structure reviewed | Complete |
 | ROS 2 Humble / Gazebo Fortress target identified | Documented upstream |
 | Dependencies installed | Not yet tested |
+| ROS-independent scan analysis unit tests | 9 passed in GitHub Actions (Python 3.11) |
+| Xacro XML / launch Python / Nav2 YAML static checks | Passed in GitHub Actions |
 | Colcon build | Not yet tested |
 | Gazebo launch | Not yet tested |
 | RViz navigation goal | Not yet tested |
