@@ -138,6 +138,16 @@ The upstream source also provides a two-robot example:
 ros2 launch smart_diffbot_bringup multi_robot_sim_example.launch.py
 ```
 
+## Architecture, workflow and test evidence
+
+- [System architecture](docs/ARCHITECTURE.md) — conceptual Gazebo, ROS 2 control, localization and Nav2 data flow.
+- [Navigation workflow](docs/NAVIGATION_WORKFLOW.md) — reproducible bringup, goal-execution and debugging sequence.
+- [Runtime test report](docs/TEST_REPORT.md) — transparent checklist for build, simulation, TF, localization and navigation verification.
+- [Project engineering notes](docs/PROJECT_NOTES.md) — package responsibilities and verification checklist.
+- [Upstream and licence notes](docs/UPSTREAM_AND_LICENSES.md) — source attribution and third-party dependency reminders.
+
+The diagrams are documentation-level architecture views, not screenshots or live ROS graph captures. Runtime verification remains pending until tested on Ubuntu.
+
 ## Engineering review and planned workflow
 
 This fork is intentionally keeping code changes minimal. The planned work is:
