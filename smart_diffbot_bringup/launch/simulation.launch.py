@@ -75,6 +75,20 @@ def generate_launch_description():
                             ],
                 output='screen',
             ),
+
+            # Front-sector LaserScan monitor (telemetry only)
+            Node(
+                package='smart_diffbot_safety',
+                executable='scan_safety_monitor',
+                name='scan_safety_monitor',
+                condition=IfCondition(LaunchConfiguration('lidar')),
+                parameters=[{
+                    'scan_topic': 'scan',
+                    'front_sector_half_angle': 0.523599,
+                    'obstacle_distance': 0.65,
+                }],
+                output='screen',
+            ),
         ]
     )
 
