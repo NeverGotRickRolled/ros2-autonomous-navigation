@@ -30,8 +30,8 @@
 | Nav2 lifecycle and costmaps | Not run | — |
 | RViz goal execution | Not run | — |
 | Multi-robot simulation | Not run | — |
-| `smart_diffbot_safety` ROS-independent Python unit tests | Passed: 9 tests in GitHub Actions (Python 3.11) | [Robot configuration workflow](https://github.com/NeverGotRickRolled/ros2-autonomous-navigation/actions/runs/42776852012) |
-| Xacro XML, launch Python syntax and Nav2 YAML static checks | Passed in GitHub Actions | [Robot configuration workflow](https://github.com/NeverGotRickRolled/ros2-autonomous-navigation/actions/runs/42776852012) |
+| `smart_diffbot_safety` ROS-independent Python unit tests | Passed: 9 tests in GitHub Actions (Python 3.11) | [Robot configuration workflow](https://github.com/NeverGotRickRolled/ros2-autonomous-navigation/actions/runs/42776980775) |
+| Xacro XML, launch Python syntax and Nav2 YAML static checks | Passed in GitHub Actions | [Robot configuration workflow](https://github.com/NeverGotRickRolled/ros2-autonomous-navigation/actions/runs/42776980775) |
 | Gazebo GPU LiDAR sensor and ROS LaserScan bridge | Implemented; runtime not run | — |
 | Nav2 local/global LaserScan obstacle layers | Configured; runtime not run | — |
 | Safety monitor receives simulated scan | Not run | — |
