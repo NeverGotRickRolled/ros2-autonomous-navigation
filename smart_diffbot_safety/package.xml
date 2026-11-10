@@ -3,7 +3,7 @@
   <name>smart_diffbot_safety</name>
   <version>0.1.0</version>
   <description>Monitoring-only front-sector LaserScan obstacle monitor for SMART diffbot.</description>
-  <maintainer>Manthan</maintainer>
+  <maintainer email="113732468+NeverGotRickRolled@users.noreply.github.com">Manthan</maintainer>
   <license>Apache-2.0</license>
   <buildtool_depend>ament_python</buildtool_depend>
   <exec_depend>rclpy</exec_depend>
