@@ -4,6 +4,7 @@
 [![Gazebo](https://img.shields.io/badge/Gazebo-Fortress-orange)](https://gazebosim.org/)
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 [![Upstream](https://img.shields.io/badge/Upstream-SaxionMechatronics%2Fsmart__diffbot-informational)](https://github.com/SaxionMechatronics/smart_diffbot)
+[![Documentation checks](https://github.com/NeverGotRickRolled/ros2-autonomous-navigation/actions/workflows/docs-check.yml/badge.svg)](https://github.com/NeverGotRickRolled/ros2-autonomous-navigation/actions/workflows/docs-check.yml)
 
 A ROS 2 mobile-robot simulation and navigation workspace based on **SMART diffbot**, an open-source differential-drive robot developed by the SMART Research Group at Saxion University of Applied Sciences.
 
