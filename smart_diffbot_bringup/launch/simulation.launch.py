@@ -20,6 +20,8 @@ def generate_launch_description():
                                     description='Use robot name to namespace robot')
     camera_arg = DeclareLaunchArgument(name='camera', default_value='true', choices=['true', 'false'],
                                     description='Include camera in robot model')
+    lidar_arg = DeclareLaunchArgument(name='lidar', default_value='true', choices=['true', 'false'],
+                                    description='Include simulated 360-degree GPU LiDAR')
     color_arg = DeclareLaunchArgument(name='color', default_value='SaxionGreen', 
                                     choices=['SaxionGreen', 'green', 'red', 'yellow', 'blue'],
                                     description='Color of the main body of the robot')
@@ -43,6 +45,7 @@ def generate_launch_description():
                                                                 ' sim:=True',
                                                                 ' robot_name:=', LaunchConfiguration('robot_name'), 
                                                                 ' camera:=', LaunchConfiguration('camera'),
+                                                                ' lidar:=', LaunchConfiguration('lidar'),
                                                                 ' color:=' , LaunchConfiguration('color')]), value_type=str) 
                             }],
                 emulate_tty=True,
@@ -68,6 +71,7 @@ def generate_launch_description():
                             ['/camera/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo'],
                             ['/navsat/fix@sensor_msgs/msg/NavSatFix[ignition.msgs.NavSat'],
                             ['/imu/data@sensor_msgs/msg/Imu[ignition.msgs.IMU'],
+                            ['/scan@sensor_msgs/msg/LaserScan[ignition.msgs.LaserScan'],
                             ],
                 output='screen',
             ),
@@ -119,6 +123,7 @@ def generate_launch_description():
                             ['/',LaunchConfiguration('robot_name'),'/camera/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo'],
                             ['/',LaunchConfiguration('robot_name'),'/navsat/fix@sensor_msgs/msg/NavSatFix[ignition.msgs.NavSat'],
                             ['/',LaunchConfiguration('robot_name'),'/imu/data@sensor_msgs/msg/Imu[ignition.msgs.IMU'],
+                            ['/',LaunchConfiguration('robot_name'),'/scan@sensor_msgs/msg/LaserScan[ignition.msgs.LaserScan'],
                             ],
                 output='screen',
             ),
@@ -133,6 +138,7 @@ def generate_launch_description():
         robot_name_arg,
         namespace_arg,
         camera_arg,
+        lidar_arg,
         color_arg,
         x_arg,
         y_arg,
