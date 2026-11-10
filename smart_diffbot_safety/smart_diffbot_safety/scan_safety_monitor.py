@@ -16,7 +16,7 @@ class ScanSafetyMonitor(Node):
 
     def __init__(self):
         super().__init__('scan_safety_monitor')
-        self.declare_parameter('scan_topic', '/scan')
+        self.declare_parameter('scan_topic', 'scan')
         self.declare_parameter('front_sector_half_angle', math.radians(30.0))
         self.declare_parameter('obstacle_distance', 0.65)
 
